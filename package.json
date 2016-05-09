@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "Instantly host any directory.",
   "main": "index.js",
+  "preferGlobal": true,
+  "bin": {
+	"hostnow": "./index.js"
+  },
   "scripts": {
     "test": ":"
   },

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 let express = require('express'),
 	path = require('path'),
 	fs = require('fs'),
