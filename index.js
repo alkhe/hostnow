@@ -14,7 +14,7 @@ app.use(express.static(root, {
 }));
 
 app.get('*', (req, res, next) => {
-	let local = unescape(req.path),
+	let local = decodeURI(req.path),
 		absolute = path.join(root, local);
 
 	if (!fs.existsSync(absolute)) return next();
