@@ -9,19 +9,17 @@ let args = process.argv.slice(2),
 	root = path.resolve(args[0] || process.cwd()),
 	port = Number(args[1] || 80);
 
-app.use((req, res, next) => {
-	req.path = unescape(req.path);
-	next();
-});
-
 app.use(express.static(root, {
 	dotfiles: 'allow'
 }));
 
-app.get('*', (req, res) => {
-	let local = req.path,
-		absolute = path.join(root, local),
-		children = ['.', '..'].concat(fs.readdirSync(absolute));
+app.get('*', (req, res, next) => {
+	let local = unescape(req.path),
+		absolute = path.join(root, local);
+
+	if (!fs.existsSync(absolute)) return next();
+
+	let children = ['.', '..'].concat(fs.readdirSync(absolute));
 
 	let childToHtml = c =>
 		`<a href='${ path.join(local, c) }'>${ c }</a>`;
@@ -29,6 +27,10 @@ app.get('*', (req, res) => {
 	let links = children.map(childToHtml).join('<br />');
 
 	res.send(links);
+});
+
+app.use((req, res) => {
+	res.status(404).send('404 Not Found');
 });
 
 app.listen(port, err => {
