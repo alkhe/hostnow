@@ -2,7 +2,7 @@
 
 let express = require('express'),
 	path = require('path'),
-	fs = require('fs'),
+	serveIndex = require('serve-index'),
 	app = express();
 
 let args = process.argv.slice(2),
@@ -10,28 +10,15 @@ let args = process.argv.slice(2),
 	port = Number(args[1] || 80);
 
 app.use(express.static(root, {
-	dotfiles: 'allow'
-}));
-
-app.get('*', (req, res, next) => {
-	let local = decodeURI(req.path),
-		absolute = path.join(root, local);
-
-	if (!fs.existsSync(absolute)) return next();
-
-	let children = ['.', '..'].concat(fs.readdirSync(absolute));
-
-	let childToHtml = c =>
-		`<a href='${ path.join(local, c) }'>${ c }</a>`;
-
-	let links = children.map(childToHtml).join('<br />');
-
-	res.send(links);
-});
-
-app.use((req, res) => {
-	res.status(404).send('404 Not Found');
-});
+		dotfiles: 'allow'
+	}))
+	.use(serveIndex(root, {
+		hidden: true,
+		icons: true
+	}))
+	.use((req, res) => {
+		res.status(404).send('404 Not Found');
+	});
 
 app.listen(port, err => {
 	if (err) {

@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/edge/hostnow#readme",
   "dependencies": {
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "serve-index": "^1.7.3"
   }
 }
